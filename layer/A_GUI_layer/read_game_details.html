@@ -1,0 +1,27 @@
+{{ template "base.html" }}
+<div class="container">
+    <h1 class="text-center">Table details of {{ .game.ID }}</h1>
+    <br><br>
+    <table class="table table-info table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Year Released</th>
+            <th>Price</th>
+        </tr>
+        <tr>
+            <td>{{ .game.ID }}</td>
+            <td>{{ .game.Name }}</td>
+            <td>{{ .game.Category }}</td>
+            <td>{{ .game.Brand }}</td>
+            <td>{{ .game.Year_released }}</td>
+            {{if eq .game.Price 0.0}}     <!-- if .game.Price == "0" in other pro-langs -->>
+                <td>FREE</td>
+            {{else}}
+                <td>{{ .game.Price }}$</td>
+            {{end}}
+        </tr>
+    </table>
+</div>

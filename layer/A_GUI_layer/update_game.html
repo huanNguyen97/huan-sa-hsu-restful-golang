@@ -1,0 +1,35 @@
+{{ template "base.html" }}
+<div class="container">
+    <form action="/update_game/{{.game.ID}}" method="POST">
+        <table>
+            <tr>
+                <th>Index</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td><input type="text" name="name" value="{{ .game.Name }}" /></td>
+            </tr>
+            <tr>
+                <td>Category</td>
+                <td><input type="text" name="category" value="{{ .game.Category }}" /></td> 
+            </tr>
+            <tr>
+                <td>Brand</td>
+                <td><input type="text" name="brand" value="{{ .game.Brand }}" /></td>  
+            </tr>
+            <tr>
+                <td>Year released</td>
+                <td><input type="text" name="year_released" value="{{ .game.Year_released }}" /></td>   
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td><input type="text" name="price" value="{{ .game.Price }}" /></td> 
+            </tr>
+            <tr>
+                <input type="hidden" name="id" value="{{ .game.ID }}">
+            </tr>
+        </table>
+        <input type="submit" name="submit" /> 
+    </form>
+</div>
