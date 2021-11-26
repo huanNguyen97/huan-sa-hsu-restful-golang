@@ -8,6 +8,7 @@ import (
 
 	// Go importing module
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	
 	// Go importing owner
 	"github.com/huanNguyen97/huan-sa-hsu-golang/layer/B_BUS_layer"
@@ -20,96 +21,72 @@ func main() {
 	// --------------------------------------------------------------
 	app := gin.Default()
 
-	app.LoadHTMLGlob("layer/A_GUI_layer/*")
-	app.Static("/css", "./css")
+	// Enable CORS to allow all origin.
+	app.Use(cors.Default())
 
 	// Read games
 	app.GET("/", func(c *gin.Context) {
 		games := B_BUS_layer.ReadGamesBUS()
-		c.HTML(http.StatusOK, "read_games.html", gin.H{"games": games})
+		c.JSON(http.StatusOK, gin.H{"game_list": games})
 	})
 	// End read
 	
 	// Create game
-	app.GET("/create", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "create_game.html", gin.H{"create": "create"})
-	})
+	app.POST("/create-game", func(c *gin.Context) {
+		game_created := new(DTO.Game)
 
-	app.POST("/create", func(c *gin.Context) {
-		Name 			:= c.PostForm("name")
-		Category 		:= c.PostForm("category")
-		Brand 			:= c.PostForm("brand")
-		Year_released 	:= c.PostForm("year_released")
-		Price 			:= c.PostForm("price")
+		game_created.ID	 				= ""
+		game_created.Name 				= c.PostForm("name")
+		game_created.Category 			= c.PostForm("category")
+		game_created.Brand 				= c.PostForm("brand")
+		game_created.Year_released, _ 	= strconv.ParseInt(c.PostForm("year_released"), 10, 64)
+		game_created.Price, _ 			= strconv.ParseFloat(c.PostForm("price"), 64)
 
-		game_posted 					:= new(DTO.Game)
-		game_posted.ID 					= ""
-		game_posted.Name 				= Name
-		game_posted.Category 			= Category
-		game_posted.Brand 				= Brand
-		game_posted.Year_released, _ 	= strconv.ParseInt(Year_released, 10, 64)
-		game_posted.Price, _ 			= strconv.ParseFloat(Price, 64)
+		game_result := B_BUS_layer.CreateGameBUS(game_created)
 
-		B_BUS_layer.CreateGameBUS(game_posted)
-		games := B_BUS_layer.ReadGamesBUS()
-
-		c.HTML(http.StatusOK, "read_games.html", gin.H{"games": games})
+		c.JSON(http.StatusOK, gin.H{"game_result": game_result})
 	})
 	// End create
 	
 	// Read details
-	app.GET("/read_details/:id", func(c *gin.Context) {
+	app.GET("/read-details/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		game := B_BUS_layer.ReadDetailBUS(id)
-		c.HTML(http.StatusOK, "read_game_details.html", gin.H{"game": game})
+		c.JSON(http.StatusOK, gin.H{"game_detail": game})
 	})
 	// End read details
 
-	// Update game
-	app.GET("/update_game/:id", func(c *gin.Context) {
-		id := c.Param("id")
-		game := B_BUS_layer.ReadDetailBUS(id)
-		c.HTML(http.StatusOK, "update_game.html", gin.H{"game": game})
-	})
+	// Update game --> issue
+	app.PUT("/update-game/:id", func(c *gin.Context) {
+		game_updated := new(DTO.Game)
 
-	app.POST("/update_game/:id", func(c *gin.Context) {
-		ID				:= c.PostForm("id")
-		Name 			:= c.PostForm("name")
-		Category 		:= c.PostForm("category")
-		Brand 			:= c.PostForm("brand")
-		Year_released 	:= c.PostForm("year_released")
-		Price 			:= c.PostForm("price")
+		game_updated.ID	 				= c.Param("id")
+		game_updated.Name 				= c.PostForm("name")
+		game_updated.Category 			= c.PostForm("category")
+		game_updated.Brand 				= c.PostForm("brand")
+		game_updated.Year_released, _ 	= strconv.ParseInt(c.PostForm("year_released"), 10, 64)
+		game_updated.Price, _ 			= strconv.ParseFloat(c.PostForm("price"), 64)
 
-		game_posted 					:= new(DTO.Game)
-		game_posted.ID 					= ID
-		game_posted.Name 				= Name
-		game_posted.Category 			= Category
-		game_posted.Brand 				= Brand
-		game_posted.Year_released, _ 	= strconv.ParseInt(Year_released, 10, 64)
-		game_posted.Price, _ 			= strconv.ParseFloat(Price, 64)
+		game_result := B_BUS_layer.UpdateGameBUS(game_updated)
 
-		B_BUS_layer.UpdateGameBUS(game_posted)
-
-		games := B_BUS_layer.ReadGamesBUS()
-		c.HTML(http.StatusOK, "read_games.html", gin.H{"games": games})
+		c.JSON(http.StatusOK, gin.H{"game_result": game_result})
 	})
 	// End update
 
 	// Delete game
-	app.POST("/delete_game/:id", func(c *gin.Context) {
+	app.DELETE("/delete-game/:id", func(c *gin.Context) {
 		id := c.Param("id")
-		B_BUS_layer.DeleteGameBUS(id)
-		games := B_BUS_layer.ReadGamesBUS()
-		c.HTML(http.StatusOK, "read_games.html", gin.H{"games": games})
+		game_result := B_BUS_layer.DeleteGameBUS(id)
+		c.JSON(http.StatusOK, gin.H{"game_result": game_result})
 	})
 	// End delete
 
 	// Search game
-	app.POST("/search_game", func(c *gin.Context) {
-		search_name := c.PostForm("text_of_searching")
+	app.GET("/search_game/:key_name", func(c *gin.Context) {
+		search_name := c.Param("key_name")
 		key_name := "%" + search_name + "%"
 		games := B_BUS_layer.SearchGameBUS(key_name)
-		c.HTML(http.StatusOK, "read_games.html", gin.H{"games": games})
+		c.JSON(http.StatusOK, gin.H{"game_list": games})
 	})
 	// End search
 
