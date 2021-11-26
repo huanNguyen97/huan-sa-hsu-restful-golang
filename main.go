@@ -35,12 +35,12 @@ func main() {
 	app.POST("/create-game", func(c *gin.Context) {
 		game_created := new(DTO.Game)
 
-		game_created.ID	 				= ""
-		game_created.Name 				= c.PostForm("name")
-		game_created.Category 			= c.PostForm("category")
-		game_created.Brand 				= c.PostForm("brand")
+		game_created.ID	 		= ""
+		game_created.Name 		= c.PostForm("name")
+		game_created.Category 		= c.PostForm("category")
+		game_created.Brand 		= c.PostForm("brand")
 		game_created.Year_released, _ 	= strconv.ParseInt(c.PostForm("year_released"), 10, 64)
-		game_created.Price, _ 			= strconv.ParseFloat(c.PostForm("price"), 64)
+		game_created.Price, _ 		= strconv.ParseFloat(c.PostForm("price"), 64)
 
 		game_result := B_BUS_layer.CreateGameBUS(game_created)
 
@@ -60,12 +60,12 @@ func main() {
 	app.PUT("/update-game/:id", func(c *gin.Context) {
 		game_updated := new(DTO.Game)
 
-		game_updated.ID	 				= c.Param("id")
-		game_updated.Name 				= c.PostForm("name")
-		game_updated.Category 			= c.PostForm("category")
-		game_updated.Brand 				= c.PostForm("brand")
+		game_updated.ID	 		= c.Param("id")
+		game_updated.Name 		= c.PostForm("name")
+		game_updated.Category 		= c.PostForm("category")
+		game_updated.Brand 		= c.PostForm("brand")
 		game_updated.Year_released, _ 	= strconv.ParseInt(c.PostForm("year_released"), 10, 64)
-		game_updated.Price, _ 			= strconv.ParseFloat(c.PostForm("price"), 64)
+		game_updated.Price, _ 		= strconv.ParseFloat(c.PostForm("price"), 64)
 
 		game_result := B_BUS_layer.UpdateGameBUS(game_updated)
 
