@@ -1,5 +1,7 @@
 module github.com/huanNguyen97/huan-sa-hsu-golang
 
+// +heroku goVersion go1.17
+
 go 1.17
 
 require (
